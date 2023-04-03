@@ -6,7 +6,7 @@ from .dataset import stream_block_format_dataset
 import tensorflow.compat.v1 as tf
 
 
-def data_record_input_fn(
+def data_record_input(
         files, batch_size, parse_fn,
         num_threads=2, repeat=False, dataset_fn=None,
         keep_rate=None, parts_downsampling_rate=None,
@@ -126,4 +126,4 @@ def data_record_input_fn(
   return iterator.get_next()
 
 
-default_input_fn = data_record_input_fn  # pylint: disable=invalid-name
+default_input_fn = data_record_input  # pylint: disable=invalid-name

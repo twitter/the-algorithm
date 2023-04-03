@@ -18,7 +18,7 @@ import tensorflow.compat.v1 as tf
 import tensorflow_hub as hub
 import twml
 from twml.argument_parser import SortingHelpFormatter
-from twml.input_fns import data_record_input_fn
+from twml.input_fns import data_record_input
 from twml.util import list_files_by_datetime, sanitize_hdfs_path
 from twml.contrib.calibrators.isotonic import IsotonicCalibrator
 
@@ -81,7 +81,7 @@ def get_calibrate_input_fn(parse_fn, params):
     input_fn
   """
 
-  return lambda: data_record_input_fn(
+  return lambda: data_record_input(
     files=_generate_files_by_datetime(params),
     batch_size=params.calibrator_batch_size,
     parse_fn=parse_fn,
@@ -108,7 +108,7 @@ def get_discretize_input_fn(parse_fn, params):
     input_fn
   """
 
-  return lambda: data_record_input_fn(
+  return lambda: data_record_input(
     files=_generate_files_by_datetime(params),
     batch_size=params.discretizer_batch_size,
     parse_fn=parse_fn,
