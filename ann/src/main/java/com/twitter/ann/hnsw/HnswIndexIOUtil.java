@@ -106,7 +106,6 @@ public final class HnswIndexIOUtil {
 
   /**
    * Save hnsw graph in file
-   *
    * @return number of keys in the graph
    */
   public static <T> int saveHnswGraphEntries(

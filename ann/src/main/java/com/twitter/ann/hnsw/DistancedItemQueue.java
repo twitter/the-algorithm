@@ -68,7 +68,6 @@ public class DistancedItemQueue<U, T> implements Iterable<DistancedItem<T>> {
 
   /**
    * Return if queue is non empty or not
-   *
    * @return true if queue is not empty else false
    */
   public boolean nonEmpty() {
@@ -77,7 +76,6 @@ public class DistancedItemQueue<U, T> implements Iterable<DistancedItem<T>> {
 
   /**
    * Return root of the queue
-   *
    * @return root of the queue i.e min/max element depending upon min-max queue
    */
   public DistancedItem<T> peek() {
@@ -86,7 +84,6 @@ public class DistancedItemQueue<U, T> implements Iterable<DistancedItem<T>> {
 
   /**
    * Dequeue root of the queue.
-   *
    * @return remove and return root of the queue i.e min/max element depending upon min-max queue
    */
   public DistancedItem<T> dequeue() {
@@ -95,7 +92,6 @@ public class DistancedItemQueue<U, T> implements Iterable<DistancedItem<T>> {
 
   /**
    * Dequeue all the elements from queueu with ordering mantained
-   *
    * @return remove all the elements in the order of the queue i.e min/max queue.
    */
   public List<DistancedItem<T>> dequeueAll() {
@@ -109,7 +105,6 @@ public class DistancedItemQueue<U, T> implements Iterable<DistancedItem<T>> {
 
   /**
    * Convert queue to list
-   *
    * @return list of elements of queue with distance and without any specific ordering
    */
   public List<DistancedItem<T>> toList() {
@@ -118,7 +113,6 @@ public class DistancedItemQueue<U, T> implements Iterable<DistancedItem<T>> {
 
   /**
    * Convert queue to list
-   *
    * @return list of elements of queue without any specific ordering
    */
   List<T> toListWithItem() {
@@ -146,7 +140,6 @@ public class DistancedItemQueue<U, T> implements Iterable<DistancedItem<T>> {
 
   /**
    * Size
-   *
    * @return size of the queue
    */
   public int size() {
@@ -155,7 +148,6 @@ public class DistancedItemQueue<U, T> implements Iterable<DistancedItem<T>> {
 
   /**
    * Is Min queue
-   *
    * @return true if min queue else false
    */
   public boolean isMinQueue() {
@@ -164,7 +156,6 @@ public class DistancedItemQueue<U, T> implements Iterable<DistancedItem<T>> {
 
   /**
    * Returns origin (base element) of the queue
-   *
    * @return origin of the queue
    */
   public U getOrigin() {
