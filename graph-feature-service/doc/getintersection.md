@@ -1,5 +1,9 @@
 # GetIntersection
 
+## Synopsis
+
+ `GetIntersection` serves to compute the intersection of user groups subject to certain features.
+
 ## Request and response syntax
 
 A `GetIntersection` call takes as input a `GfsIntersectionRequest` thrift struct. 
