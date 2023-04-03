@@ -4,8 +4,6 @@ pub mod torch {
     use std::fmt::Display;
     use std::string::String;
 
-    use crate::TensorReturnEnum;
-    use crate::SerializedInput;
     use crate::bootstrap::TensorInput;
     use crate::cli_args::{Args, ARGS, MODEL_SPECS};
     use crate::metrics;
@@ -13,6 +11,8 @@ pub mod torch {
         INFERENCE_FAILED_REQUESTS_BY_MODEL, NUM_REQUESTS_FAILED, NUM_REQUESTS_FAILED_BY_MODEL,
     };
     use crate::predict_service::Model;
+    use crate::SerializedInput;
+    use crate::TensorReturnEnum;
     use anyhow::Result;
     use dr_transform::converter::BatchPredictionRequestToTorchTensorConverter;
     use dr_transform::converter::Converter;
@@ -62,6 +62,7 @@ pub mod torch {
             torch_model.warmup()?;
             Ok(torch_model)
         }
+
         #[inline(always)]
         pub fn decode_to_inputs(bytes: SerializedInput) -> Vec<Tensor> {
             //FIXME: for now we generate 4 random tensors as inputs to unblock end to end testing
@@ -76,6 +77,7 @@ pub mod torch {
 
             vec![t1, t2, t3, t4, t5, t6]
         }
+
         #[inline(always)]
         pub fn output_to_vec(res: IValue, dst: &mut Vec<f32>) {
             match res {
@@ -86,10 +88,12 @@ pub mod torch {
                 _ => panic!("we only support output as a single tensor or a vec of tensors"),
             }
         }
+
         #[inline(always)]
         pub fn tensor_flatten_size(t: &Tensor) -> usize {
             t.size().into_iter().fold(1, |acc, x| acc * x) as usize
         }
+
         #[inline(always)]
         pub fn tensor_to_vec<T: kind::Element>(res: &Tensor) -> Vec<T> {
             let size = TorchModel::tensor_flatten_size(res);
@@ -101,6 +105,7 @@ pub mod torch {
             // println!("Copied tensor:{}, {:?}", res_f32.len(), res_f32);
             res_f32
         }
+
         #[inline(always)]
         pub fn tensors_to_vec(tensors: &[Tensor], dst: &mut Vec<f32>) {
             let mut offset = dst.len();
@@ -114,6 +119,7 @@ pub mod torch {
                 offset = next_size;
             });
         }
+
         pub fn ivalues_to_tensors(ivalues: Vec<IValue>) -> Vec<Tensor> {
             ivalues
                 .into_iter()
@@ -132,6 +138,7 @@ pub mod torch {
         fn warmup(&self) -> Result<()> {
             Ok(())
         }
+
         //TODO: torch runtime needs some refactor to make it a generic interface
         #[inline(always)]
         fn do_predict(
@@ -171,10 +178,12 @@ pub mod torch {
                 vec![batch_ends],
             )
         }
+
         #[inline(always)]
         fn model_idx(&self) -> usize {
             self.model_idx
         }
+
         #[inline(always)]
         fn version(&self) -> i64 {
             self.version

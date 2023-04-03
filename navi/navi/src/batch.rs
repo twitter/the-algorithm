@@ -7,17 +7,17 @@ use tokio::time::Instant;
 
 use crate::bootstrap::{TensorInput, TensorInputEnum};
 use crate::cli_args::{ARGS, MODEL_SPECS};
-use crate::{Callback, MAX_NUM_INPUTS, PredictResult};
 use crate::metrics::{
     BATCH_SIZE, BATCH_SIZE_BY_MODEL, BLOCKING_REQUEST_NUM, MODEL_INFERENCE_TIME_COLLECTOR,
-    NUM_BATCH_PREDICTION, NUM_BATCH_PREDICTION_BY_MODEL, NUM_BATCHES_DROPPED,
-    NUM_BATCHES_DROPPED_BY_MODEL, NUM_PREDICTION_BY_MODEL, NUM_REQUESTS_DROPPED,
+    NUM_BATCHES_DROPPED, NUM_BATCHES_DROPPED_BY_MODEL, NUM_BATCH_PREDICTION,
+    NUM_BATCH_PREDICTION_BY_MODEL, NUM_PREDICTION_BY_MODEL, NUM_REQUESTS_DROPPED,
     NUM_REQUESTS_DROPPED_BY_MODEL,
 };
 use crate::predict_service::Model;
 use crate::tf_proto::tensorflow_serving::model_spec::VersionChoice;
 use crate::tf_proto::tensorflow_serving::PredictRequest;
 use crate::tf_proto::DataType;
+use crate::{Callback, PredictResult, MAX_NUM_INPUTS};
 
 #[derive(Debug)]
 pub struct BatchPredictor<T: Model> {
@@ -83,6 +83,7 @@ impl PredictRequest {
         }
         model_inputs
     }
+
     #[inline(always)]
     pub fn take_model_spec(&mut self) -> (String, Option<i64>) {
         let model_spec = self.model_spec.as_mut().unwrap();
@@ -123,6 +124,7 @@ impl<T: Model> BatchPredictor<T> {
         self.input_tensors.push(val);
         self.callbacks.push(Callback(resp, self.cur_batch_size));
     }
+
     #[inline(always)]
     pub fn batch_predict(&mut self) {
         BATCH_SIZE_BY_MODEL
@@ -196,6 +198,7 @@ impl<T: Model> BatchPredictor<T> {
             .with_label_values(&[&MODEL_SPECS[self.model.model_idx()]])
             .inc_by(batch_size as u64);
     }
+
     #[inline(always)]
     pub fn duration_past(&self, millis: u64) -> bool {
         self.queue_reset_ts.elapsed().as_millis() as u64 >= millis

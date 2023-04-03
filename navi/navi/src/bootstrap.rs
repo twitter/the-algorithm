@@ -3,8 +3,8 @@ use log::{info, warn};
 use std::collections::HashMap;
 use tokio::time::Instant;
 use tonic::{
-    Request,
-    Response, Status, transport::{Certificate, Identity, Server, ServerTlsConfig},
+    transport::{Certificate, Identity, Server, ServerTlsConfig},
+    Request, Response, Status,
 };
 
 // protobuf related
@@ -13,16 +13,19 @@ use crate::tf_proto::tensorflow_serving::{
     GetModelMetadataResponse, MultiInferenceRequest, MultiInferenceResponse, PredictRequest,
     PredictResponse, RegressionRequest, RegressionResponse,
 };
-use crate::{kf_serving::{
-    grpc_inference_service_server::GrpcInferenceService, ModelInferRequest, ModelInferResponse,
-    ModelMetadataRequest, ModelMetadataResponse, ModelReadyRequest, ModelReadyResponse,
-    ServerLiveRequest, ServerLiveResponse, ServerMetadataRequest, ServerMetadataResponse,
-    ServerReadyRequest, ServerReadyResponse,
-}, ModelFactory, tf_proto::tensorflow_serving::prediction_service_server::{
-    PredictionService, PredictionServiceServer,
-}, VERSION, NAME};
+use crate::{
+    kf_serving::{
+        grpc_inference_service_server::GrpcInferenceService, ModelInferRequest, ModelInferResponse,
+        ModelMetadataRequest, ModelMetadataResponse, ModelReadyRequest, ModelReadyResponse,
+        ServerLiveRequest, ServerLiveResponse, ServerMetadataRequest, ServerMetadataResponse,
+        ServerReadyRequest, ServerReadyResponse,
+    },
+    tf_proto::tensorflow_serving::prediction_service_server::{
+        PredictionService, PredictionServiceServer,
+    },
+    ModelFactory, NAME, VERSION,
+};
 
-use crate::PredictResult;
 use crate::cli_args::{ARGS, INPUTS, OUTPUTS};
 use crate::metrics::{
     NAVI_VERSION, NUM_PREDICTIONS, NUM_REQUESTS_FAILED, NUM_REQUESTS_FAILED_BY_MODEL,
@@ -31,6 +34,7 @@ use crate::metrics::{
 use crate::predict_service::{Model, PredictService};
 use crate::tf_proto::tensorflow_serving::model_spec::VersionChoice::Version;
 use crate::tf_proto::tensorflow_serving::ModelSpec;
+use crate::PredictResult;
 
 #[derive(Debug)]
 pub enum TensorInputEnum {
@@ -59,6 +63,7 @@ impl TensorInput {
     }
 }
 
+#[allow(dead_code)]
 impl TensorInputEnum {
     #[inline(always)]
     pub(crate) fn extend(&mut self, another: TensorInputEnum) {
@@ -86,7 +91,6 @@ impl TensorInputEnum {
     }
 }
 
-
 ///entry point for tfServing gRPC
 #[tonic::async_trait]
 impl<T: Model> GrpcInferenceService for PredictService<T> {
@@ -96,6 +100,7 @@ impl<T: Model> GrpcInferenceService for PredictService<T> {
     ) -> Result<Response<ServerLiveResponse>, Status> {
         unimplemented!()
     }
+
     async fn server_ready(
         &self,
         _request: Request<ServerReadyRequest>,
@@ -140,12 +145,14 @@ impl<T: Model> PredictionService for PredictService<T> {
     ) -> Result<Response<ClassificationResponse>, Status> {
         unimplemented!()
     }
+
     async fn regress(
         &self,
         _request: Request<RegressionRequest>,
     ) -> Result<Response<RegressionResponse>, Status> {
         unimplemented!()
     }
+
     async fn predict(
         &self,
         request: Request<PredictRequest>,
@@ -222,6 +229,7 @@ impl<T: Model> PredictionService for PredictService<T> {
     ) -> Result<Response<MultiInferenceResponse>, Status> {
         unimplemented!()
     }
+
     async fn get_model_metadata(
         &self,
         _request: Request<GetModelMetadataRequest>,

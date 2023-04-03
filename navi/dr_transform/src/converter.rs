@@ -16,7 +16,7 @@ use segdense::util;
 use thrift::protocol::{TBinaryInputProtocol, TSerializable};
 use thrift::transport::TBufferChannel;
 
-use crate::{all_config};
+use crate::all_config;
 use crate::all_config::AllConfig;
 
 pub fn log_feature_match(

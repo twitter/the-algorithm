@@ -10,12 +10,15 @@ use tokio::process::Command;
 use tokio::sync::mpsc::error::TryRecvError;
 use tokio::sync::mpsc::{Receiver, Sender};
 use tokio::sync::{mpsc, oneshot};
-use tokio::time::{Instant, sleep};
+use tokio::time::{sleep, Instant};
 use warp::Filter;
 
 use crate::batch::BatchPredictor;
 use crate::bootstrap::TensorInput;
-use crate::{MAX_NUM_MODELS, MAX_VERSIONS_PER_MODEL, META_INFO, metrics, ModelFactory, PredictMessage, PredictResult, TensorReturnEnum, utils};
+use crate::{
+    metrics, utils, ModelFactory, PredictMessage, PredictResult, TensorReturnEnum, MAX_NUM_MODELS,
+    MAX_VERSIONS_PER_MODEL, META_INFO,
+};
 
 use crate::cli_args::{ARGS, MODEL_SPECS};
 use crate::cores::validator::validatior::cli_validator;
@@ -54,6 +57,7 @@ impl<T: Model> PredictService<T> {
         tokio::spawn(metric_server);
         PredictService { tx }
     }
+
     #[inline(always)]
     pub async fn predict(
         &self,
@@ -208,6 +212,7 @@ impl<T: Model> PredictService<T> {
             sleep(Duration::from_secs(ARGS.model_check_interval_secs)).await;
         }
     }
+
     async fn tf_queue_manager(mut rx: Receiver<PredictMessage<T>>) {
         // Start receiving messages
         info!("setting up queue manager");
@@ -306,6 +311,7 @@ impl<T: Model> PredictService<T> {
             }
         }
     }
+
     #[inline(always)]
     pub fn get_model_index(model_spec: &str) -> Option<usize> {
         MODEL_SPECS.iter().position(|m| m == model_spec)

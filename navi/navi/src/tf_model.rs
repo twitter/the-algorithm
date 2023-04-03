@@ -7,7 +7,7 @@ pub mod tf {
     use std::fmt;
     use std::fmt::Display;
     use std::string::String;
-    use tensorflow::io::{RecordReader, RecordReadError};
+    use tensorflow::io::{RecordReadError, RecordReader};
     use tensorflow::Operation;
     use tensorflow::SavedModelBundle;
     use tensorflow::SessionOptions;
@@ -20,18 +20,18 @@ pub mod tf {
 
     use crate::cli_args::{Args, ARGS, INPUTS, MODEL_SPECS, OUTPUTS};
     use crate::tf_proto::tensorflow_serving::prediction_log::LogType;
-    use crate::tf_proto::tensorflow_serving::{PredictionLog, PredictLog};
+    use crate::tf_proto::tensorflow_serving::{PredictLog, PredictionLog};
     use crate::tf_proto::ConfigProto;
     use anyhow::{Context, Result};
     use serde_json::Value;
 
-    use crate::TensorReturnEnum;
     use crate::bootstrap::{TensorInput, TensorInputEnum};
     use crate::metrics::{
         INFERENCE_FAILED_REQUESTS_BY_MODEL, NUM_REQUESTS_FAILED, NUM_REQUESTS_FAILED_BY_MODEL,
     };
     use crate::predict_service::Model;
-    use crate::{MAX_NUM_INPUTS, utils};
+    use crate::TensorReturnEnum;
+    use crate::{utils, MAX_NUM_INPUTS};
 
     #[derive(Debug)]
     pub enum TFTensorEnum {
@@ -285,6 +285,7 @@ pub mod tf {
                 ),
             }
         }
+
         fn fetch_output<T: TensorType>(
             args: &mut SessionRunArgs,
             token_output: &FetchToken,
@@ -480,10 +481,12 @@ pub mod tf {
             //TODO: support actual mtl model outputs
             (predict_return, batch_ends)
         }
+
         #[inline(always)]
         fn model_idx(&self) -> usize {
             self.model_idx
         }
+
         #[inline(always)]
         fn version(&self) -> i64 {
             self.version

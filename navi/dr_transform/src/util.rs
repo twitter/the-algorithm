@@ -10,7 +10,9 @@ pub fn load_batch_prediction_request_base64(file_name: &str) -> Vec<Vec<u8>> {
     let file = File::open(file_name).expect("could not read file");
     let mut result = vec![];
     for line in io::BufReader::new(file).lines() {
-        match base64::decode(line.unwrap().trim()) {
+        #[allow(deprecated)]
+        let decoded = base64::decode(line.unwrap().trim());
+        match decoded {
             Ok(payload) => result.push(payload),
             Err(err) => println!("error decoding line {}", err),
         }

@@ -1,6 +1,7 @@
-use serde::{Deserialize, Serialize};
-
-use serde_json::Error;
+use {
+    serde::{Deserialize, Serialize},
+    serde_json::Error,
+};
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]

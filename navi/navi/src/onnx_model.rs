@@ -1,13 +1,11 @@
 #[cfg(feature = "onnx")]
 pub mod onnx {
-    use crate::TensorReturnEnum;
     use crate::bootstrap::{TensorInput, TensorInputEnum};
-    use crate::cli_args::{
-        Args, ARGS, INPUTS, MODEL_SPECS, OUTPUTS,
-    };
+    use crate::cli_args::{Args, ARGS, INPUTS, MODEL_SPECS, OUTPUTS};
     use crate::metrics::{self, CONVERTER_TIME_COLLECTOR};
     use crate::predict_service::Model;
-    use crate::{MAX_NUM_INPUTS, MAX_NUM_OUTPUTS, META_INFO, utils};
+    use crate::TensorReturnEnum;
+    use crate::{utils, MAX_NUM_INPUTS, MAX_NUM_OUTPUTS, META_INFO};
     use anyhow::Result;
     use arrayvec::ArrayVec;
     use dr_transform::converter::{BatchPredictionRequestToTorchTensorConverter, Converter};
@@ -76,6 +74,7 @@ pub mod onnx {
                 .flatten()
                 .collect::<ArrayVec<usize, MAX_NUM_OUTPUTS>>()
         }
+
         #[cfg(target_os = "linux")]
         fn ep_choices() -> Vec<ExecutionProvider> {
             match ARGS.onnx_gpu_ep.as_ref().map(|e| e.as_str()) {
@@ -85,6 +84,7 @@ pub mod onnx {
                 _ => vec![Self::ep_with_options(ExecutionProvider::cpu())],
             }
         }
+
         fn ep_with_options(mut ep: ExecutionProvider) -> ExecutionProvider {
             for (ref k, ref v) in ARGS.onnx_ep_options.clone() {
                 ep = ep.with(k, v);
@@ -92,10 +92,12 @@ pub mod onnx {
             }
             ep
         }
+
         #[cfg(target_os = "macos")]
         fn ep_choices() -> Vec<ExecutionProvider> {
             vec![Self::ep_with_options(ExecutionProvider::cpu())]
         }
+
         pub fn new(idx: usize, version: String, model_config: &Value) -> Result<OnnxModel> {
             let export_dir = format!("{}/{}/model.onnx", ARGS.model_dir[idx], version);
             let meta_info = format!("{}/{}/{}", ARGS.model_dir[idx], version, META_INFO);
@@ -187,6 +189,7 @@ pub mod onnx {
             Ok(onnx_model)
         }
     }
+
     ///Currently we only assume the input as just one string tensor.
     ///The string tensor will be be converted to the actual raw tensors.
     /// The converter we are using is very specific to home.
@@ -248,17 +251,20 @@ pub mod onnx {
                         //only works for batch major
                         //TODO: to_vec() obviously wasteful, especially for large batches(GPU) . Will refactor to
                         //break up output and return Vec<Vec<TensorScore>> here
-                        TensorReturnEnum::FloatTensorReturn(Box::new(output.view().as_slice().unwrap().to_vec(),
+                        TensorReturnEnum::FloatTensorReturn(Box::new(
+                            output.view().as_slice().unwrap().to_vec(),
                         )),
                         tensor_ends,
                     )
                 })
                 .unzip()
         }
+
         #[inline(always)]
         fn model_idx(&self) -> usize {
             self.model_idx
         }
+
         #[inline(always)]
         fn version(&self) -> i64 {
             self.version

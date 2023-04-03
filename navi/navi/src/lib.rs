@@ -2,14 +2,14 @@
 extern crate lazy_static;
 extern crate core;
 
-use serde_json::Value;
-use tokio::sync::oneshot::Sender;
-use tokio::time::Instant;
-use std::ops::Deref;
-use itertools::Itertools;
 use crate::bootstrap::TensorInput;
 use crate::predict_service::Model;
 use crate::tf_proto::{DataType, TensorProto};
+use itertools::Itertools;
+use serde_json::Value;
+use std::ops::Deref;
+use tokio::sync::oneshot::Sender;
+use tokio::time::Instant;
 
 pub mod batch;
 pub mod bootstrap;
@@ -57,6 +57,7 @@ mod utils {
         let v: Value = serde_json::from_str(&json)?;
         Ok(v)
     }
+
     pub fn get_config_or_else<F>(model_config: &Value, key: &str, default: F) -> String
     where
         F: FnOnce() -> String,
@@ -80,9 +81,11 @@ mod utils {
             }
         }
     }
+    #[allow(dead_code)]
     pub fn get_config_or(model_config: &Value, key: &str, default: &str) -> String {
         get_config_or_else(model_config, key, || default.to_string())
     }
+
     pub fn get_meta_dir() -> &'static str {
         ARGS.meta_json_dir
             .as_ref()
@@ -182,6 +185,7 @@ impl TensorScores {
             },
         }
     }
+
     pub fn len(&self) -> usize {
         match &self {
             TensorScores::Float32TensorScores(t) => t.len(),
