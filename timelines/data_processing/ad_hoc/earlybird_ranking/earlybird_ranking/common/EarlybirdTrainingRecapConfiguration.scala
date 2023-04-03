@@ -6,8 +6,8 @@ import com.twitter.timelines.prediction.features.recap.RecapFeatures
 class EarlybirdTrainingRecapConfiguration extends EarlybirdTrainingConfiguration {
   override val labels: Map[String, Feature.Binary] = Map(
     "detail_expanded" -> RecapFeatures.IS_CLICKED,
-    "favorited" -> RecapFeatures.IS_FAVORITED,
-    "open_linked" -> RecapFeatures.IS_OPEN_LINKED,
+    "favorited" -> RecapFeatures.is_favorite,
+    "open_linked" -> RecapFeatures.is_linked,
     "photo_expanded" -> RecapFeatures.IS_PHOTO_EXPANDED,
     "profile_clicked" -> RecapFeatures.IS_PROFILE_CLICKED,
     "replied" -> RecapFeatures.IS_REPLIED,
