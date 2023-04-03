@@ -1268,7 +1268,7 @@ public class EarlybirdLuceneQueryVisitor extends SearchQueryVisitor<Query> {
    * Creates a Lucene query for an operator that's not supported by the search service.
    *
    * NOTE: Developer, if you are writing a class to extends this class, make sure the
-   * behaviour of this function makes sense for your search service.
+   * behavior of this function makes sense for your search service.
    *
    * @param op The operator that's not supported by the search service.
    * @return The Lucene query for this operator
