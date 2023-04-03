@@ -19,13 +19,19 @@ pub struct FeatureMapper {
 impl FeatureMapper {
     pub fn new() -> FeatureMapper {
         FeatureMapper {
-            map: HashMap::new()
+            map: HashMap::new(),
+        }
+    }
+
+    pub fn with_capacity(capacity: usize) -> FeatureMapper {
+        FeatureMapper {
+            map: HashMap::with_capacity(capacity),
         }
     }
 }
 
 pub trait MapWriter {
-    fn set(&mut self, feature_id: i64, info: FeatureInfo); 
+    fn set(&mut self, feature_id: i64, info: FeatureInfo);
 }
 
 pub trait MapReader {
@@ -34,7 +40,7 @@ pub trait MapReader {
 
 impl MapWriter for FeatureMapper {
     fn set(&mut self, feature_id: i64, info: FeatureInfo) {
-        self.map.insert(feature_id, info);
+        self.map.entry(feature_id).or_insert(info);
     }
 }
 
