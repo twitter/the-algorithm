@@ -2,10 +2,19 @@ syntax = "proto3";
 
 package tensorflow;
 
+// Enable arenas for more efficient memory management
 option cc_enable_arenas = true;
+
+// Set the outer class name for generated Java code
 option java_outer_classname = "VersionsProtos";
+
+// Generate multiple Java files for the proto package
 option java_multiple_files = true;
+
+// Set the Java package name for generated code
 option java_package = "org.tensorflow.framework";
+
+// Set the Go package name for generated code
 option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/framework/versions_go_proto";
 
 // Version information for a piece of serialized data
@@ -14,20 +23,28 @@ option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/framewo
 // (GraphDef, etc.), but they all have the same common shape
 // described here.
 //
-// Each consumer has "consumer" and "min_producer" versions (specified
-// elsewhere).  A consumer is allowed to consume this data if
+// Each consumer has a "consumer_version" and a "min_producer_version". A consumer is allowed to consume this data if
 //
-//   producer >= min_producer
-//   consumer >= min_consumer
-//   consumer not in bad_consumers
+// producer_version >= min_producer_version
+// consumer_version >= min_consumer_version
+// consumer_version not in bad_consumer_versions
 //
 message VersionDef {
-  // The version of the code that produced this data.
-  int32 producer = 1;
+// The version of the code that produced this data.
+int32 producer_version = 1;
 
-  // Any consumer below this version is not allowed to consume this data.
-  int32 min_consumer = 2;
+// The minimum consumer version required to consume this data.
+int32 min_consumer_version = 2;
 
-  // Specific consumer versions which are disallowed (e.g. due to bugs).
-  repeated int32 bad_consumers = 3;
+// Specific consumer versions which are disallowed (e.g. due to bugs).
+repeated BadConsumerVersion bad_consumer_versions = 3;
+}
+
+// Represents a bad consumer version that is not allowed to consume data.
+message BadConsumerVersion {
+// The version of the bad consumer.
+int32 version = 1;
+
+// A description of the issue with the bad consumer version.
+string issue_description = 2;
 }
