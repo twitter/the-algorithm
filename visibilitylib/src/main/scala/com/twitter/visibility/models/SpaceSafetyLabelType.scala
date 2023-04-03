@@ -36,7 +36,6 @@ object SpaceSafetyLabelType extends SafetyLabelType {
     s.SpaceSafetyLabelType.HatefulHighRecall -> HatefulHighRecall,
     s.SpaceSafetyLabelType.ViolenceHighRecall -> ViolenceHighRecall,
     s.SpaceSafetyLabelType.HighToxicityModelScore -> HighToxicityModelScore,
-    s.SpaceSafetyLabelType.UkraineCrisisTopic -> UkraineCrisisTopic,
     s.SpaceSafetyLabelType.DoNotPublicPublish -> DoNotPublicPublish,
     s.SpaceSafetyLabelType.Reserved16 -> Deprecated,
     s.SpaceSafetyLabelType.Reserved17 -> Deprecated,
